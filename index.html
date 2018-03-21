@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Compiled and minified CSS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+		<script src="howler.min.js"></script>
+		<script type="text/javascript">
+			window.active = null;
+			var loops = [
+				{
+					name: 'Urfaust',
+					url: 'urfaust.ogg'
+				},
+				{
+					name: 'The Ruins of Beverast',
+					url: 'theruinsofbeverast.mp3'
+				}
+			];
+			function get_obj_by_url(url) {
+				for (var i=0; i < loops.length; i++) {
+					if (loops[i].url == url) {
+						return loops[i];
+					}
+				}
+			}
+			function enable_button(url) {
+				var element;
+				if (window.active) {
+					var old_obj = get_obj_by_url(window.active);
+					element = document.getElementById(window.active);
+					element.innerHTML = get_obj_by_url(window.active).name;
+					element.classList.remove('active');
+					if (old_obj.howl) {
+						old_obj.howl.stop();
+					}
+				}
+				element = document.getElementById(url);
+				window.active = url;
+				element.innerHTML = '&#9654; ' + element.innerHTML;
+				element.classList.add('active');
+				var new_obj = get_obj_by_url(url);
+				if (new_obj.howl) {
+					new_obj.howl.play();
+				}
+			}
+			function click_handler(url) {
+				if (window.active === url) {
+					return;
+				}
+				var obj = get_obj_by_url(url);
+				if (url.howl === undefined) {
+					obj.howl = new Howl({
+						src: [url],
+						autoplay: false,
+						loop: true,
+						volume: 1.0
+					});
+				}
+				enable_button(url);
+			}
+			$(document).ready(function() {
+				var loop;
+				$(document).ready(function() {
+					var loops_list = document.getElementById('content');
+					for (var i=0; i < loops.length; i++) {
+						loop = loops[i];
+						loops_list.innerHTML += '<a onclick="click_handler(\'' + loop.url + '\')" id="' + loop.url + '" href="javascript:void(0)" class="collection-item">' + loop.name + '</a>';
+					}
+				});
+			});
+		</script>
+
+		<style type="text/css">
+			.footer {
+				position: absolute;
+				bottom: 0px;
+				color: #555;
+				font-size: 10pt;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="maincontent">
+			<ul class="collection with-header" id="loops-list">
+				<li class="collection-header text-black">
+					<h4>MLoops</h4>
+				</li>
+				<div id="content">
+				</div>
+			</ul>
+		</div>
+		<span class="footer">2018@Willie Lawrence</span>
+	</body>
+</html>
